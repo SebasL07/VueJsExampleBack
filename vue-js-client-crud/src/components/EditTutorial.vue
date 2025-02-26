@@ -23,8 +23,8 @@
             @click="setActiveTutorial(tutorial, index)"
         >
           {{ tutorial.title }}
-          <router-link :to="'/tutorials/' + tutorial.id" class="btn btn-sm btn-warning">
-            Edit
+          <router-link :to="'/tutorials/' + tutorial.id" class="btn btn-sm btn-primary">
+            Update
           </router-link>
         </li>
       </ul>
@@ -46,9 +46,27 @@
           <label><strong>Status:</strong></label> {{ currentTutorial.published ? "Published" : "Pending" }}
         </div>
 
-        <router-link :to="'/tutorials/' + currentTutorial.id" class="badge badge-warning">
-          Edit
-        </router-link>
+        <div class="mt-3">
+          <button v-if="currentTutorial.published"
+                  class="btn btn-sm btn-warning"
+                  @click="updatePublished(false)">
+            Unpublish
+          </button>
+
+          <button v-else
+                  class="btn btn-sm btn-success"
+                  @click="updatePublished(true)">
+            Publish
+          </button>
+
+          <router-link :to="'/tutorials/' + currentTutorial.id" class="btn btn-sm btn-primary mx-2">
+            Update
+          </router-link>
+
+          <button class="btn btn-sm btn-danger" @click="deleteTutorial">
+            Delete
+          </button>
+        </div>
       </div>
       <div v-else>
         <br />
@@ -114,6 +132,33 @@ export default {
           .catch(e => {
             console.log(e);
           });
+    },
+
+    updatePublished(status) {
+      let data = {
+        title: this.currentTutorial.title,
+        description: this.currentTutorial.description,
+        published: status
+      };
+
+      TutorialDataService.update(this.currentTutorial.id, data)
+          .then(response => {
+            this.currentTutorial.published = status;
+            console.log(response.data);
+          })
+          .catch(e => {
+            console.log(e);
+          });
+    },
+
+    deleteTutorial() {
+      TutorialDataService.delete(this.currentTutorial.id)
+          .then(() => {
+            this.refreshList();
+          })
+          .catch(e => {
+            console.log(e);
+          });
     }
   },
   mounted() {
@@ -127,5 +172,15 @@ export default {
   text-align: left;
   max-width: 750px;
   margin: auto;
+}
+
+button{
+  margin: 5px;
+  padding: 5px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: yellow;
 }
 </style>
