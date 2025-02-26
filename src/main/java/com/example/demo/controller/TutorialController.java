@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:8080/api")
+@CrossOrigin(origins = "http://localhost:8081")
 @RestController
 @RequestMapping("/api")
 public class TutorialController {
@@ -48,13 +48,16 @@ public class TutorialController {
     @PostMapping("/tutorials")
     public ResponseEntity<Tutorial> createTutorial(@RequestBody Tutorial tutorial) {
         try {
+            System.out.println(tutorial);
             Tutorial newTutorial = tutorialRepository.save(
                     new Tutorial(0, tutorial.getTitle(), tutorial.getDescription(), tutorial.isPublished())
+
             );
             return new ResponseEntity<>(newTutorial, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
     }
 
     @PutMapping("/tutorials/{id}")
